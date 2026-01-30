@@ -1,0 +1,76 @@
+<mapper namespace="com.gushu.gushumingmu.Tree.mapper.AncientTreeMapper">
+
+    <select id="selectPageDTO" resultType="com.gushu.gushumingmu.Tree.Dto.AncientTreeDTO">
+        SELECT *
+        FROM ancient_tree
+        <where>
+            <if test="treeName != null and treeName != ''">
+                AND tree_name LIKE CONCAT('%', #{treeName}, '%')
+            </if>
+            <if test="species != null and species != ''">
+                AND species = #{species}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectDTOById" resultType="com.gushu.gushumingmu.Tree.Dto.AncientTreeDTO">
+        SELECT * FROM ancient_tree WHERE id = #{id}
+    </select>
+
+    <select id="selectMapTrees" resultType="com.gushu.gushumingmu.Tree.Dto.MapTreeDTO">
+        SELECT
+        tree_name AS name,
+        longitude,
+        latitude
+        FROM ancient_tree
+        WHERE longitude IS NOT NULL
+        AND latitude IS NOT NULL
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM ancient_tree
+    </select>
+
+    <select id="speciesDistribution" resultType="map">
+        SELECT species AS name, COUNT(*) AS value
+        FROM ancient_tree
+        GROUP BY species
+        ORDER BY value DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="healthDistribution" resultType="map">
+        SELECT health_status AS name, COUNT(*) AS value
+        FROM ancient_tree
+        GROUP BY health_status
+    </select>
+
+    <select id="levelDistribution" resultType="map">
+        SELECT protect_level AS name, COUNT(*) AS value
+        FROM ancient_tree
+        GROUP BY protect_level
+    </select>
+
+    <select id="ageDistribution" resultType="map">
+        SELECT
+        CASE
+        WHEN age &lt; 100 THEN '100年以下'
+        WHEN age BETWEEN 100 AND 300 THEN '100-300年'
+        ELSE '300年以上'
+        END AS name,
+        COUNT(*) AS value
+        FROM ancient_tree
+        GROUP BY name
+    </select>
+
+    <select id="mapData" resultType="map">
+        SELECT
+        tree_name AS name,
+        longitude,
+        latitude
+        FROM ancient_tree
+        WHERE longitude IS NOT NULL
+        AND latitude IS NOT NULL
+    </select>
+
+</mapper>
